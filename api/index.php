@@ -85,14 +85,14 @@ function handleConfig() {
         "baseDYURL" => "https://tianque.126581.xyz/api/vpnnodes.php",
         "mainregisterURL" => "https://tianque.126581.xyz/#/register?code=",
         "paymentURL" => "https://tianque.126581.xyz/payment",
-        "telegramurl" => "https://t.me/yourchannel",
+        "telegramurl" => "https://t.me/fastlink",
         "kefuurl" => "https://tianque.126581.xyz/support",
         "websiteURL" => "https://tianque.126581.xyz",
-        "crisptoken" => "your-crisp-token-here",
+        "crisptoken" => "5546c6ea-4b1e-41bc-80e4-4b6648cbca76",
         "banners" => [
-            "https://tianque.126581.xyz/banner1.png",
-            "https://tianque.126581.xyz/banner2.png",
-            "https://tianque.126581.xyz/banner3.png"
+            "https://image.gooapis.com/api/images/12-11-56.png",
+            "https://image.gooapis.com/api/images/12-44-57.png",
+            "https://image.gooapis.com/api/images/12-47-03.png"
         ],
         "message" => "OK",
         "code" => 1
