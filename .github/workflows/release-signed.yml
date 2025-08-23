@@ -7,6 +7,13 @@ on:
     branches: [ main, master ]
     paths:
       - 'Android-kotlin-Code/**'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号 (例如: v3.2.3)'
+        required: true
+        default: 'v3.2.3'
+        type: string
 
 jobs:
   release-build:
@@ -71,14 +78,14 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: Android-kotlin-Code/app/build/outputs/apk/**/*.apk
-        tag_name: ${{ github.ref_name }}
-        name: UUVPN ${{ github.ref_name }} (Official Release)
+        tag_name: ${{ github.event.inputs.version || github.ref_name }}
+        name: UUVPN ${{ github.event.inputs.version || github.ref_name }} (Official Release)
         body: |
           ## 🚀 UUVPN Android App - Official Release
           
           ### 📱 应用信息
-          - **版本**: ${{ github.ref_name }}
-          - **构建时间**: ${{ github.event.head_commit.timestamp }}
+          - **版本**: ${{ github.event.inputs.version || github.ref_name }}
+          - **构建时间**: ${{ github.event.head_commit.timestamp || github.event.created_at }}
           - **构建类型**: Official Release (已签名)
           
           ### 🔧 安装说明
