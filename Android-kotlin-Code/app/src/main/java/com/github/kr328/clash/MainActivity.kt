@@ -339,7 +339,7 @@ class MainActivity : BaseActivity<MainDesign>() {
         // 检查登录状态和认证数据
         if (!PreferenceManager.isLoginin || PreferenceManager.loginauthData.isEmpty()) {
             println("User not logged in or no auth data, skipping subscription")
-            withContext(Dispatchers.Main) {
+            CoroutineScope(Dispatchers.Main).launch {
                 LoadingDialog.hide()
             }
             return
