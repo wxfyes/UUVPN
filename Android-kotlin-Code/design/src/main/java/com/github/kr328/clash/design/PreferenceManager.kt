@@ -67,13 +67,13 @@ object PreferenceManager {
         }
 
     var isLoginin: Boolean
-        get() = prefs.getBoolean("isLoginin", false) ?: false
+        get() = prefs.getBoolean("isLoginin", false)
         set(value) {
             prefs.edit().putBoolean("isLoginin", value).apply()
         }
 
     var baseURL: String
-        get() = prefs.getString("baseURL", "https://go.tianquege.top/api/v1/") ?: "https://go.126581.xyz/api/v1/"
+        get() = prefs.getString("baseURL", "https://go.tianquege.top/api/v1/") ?: "https://go.tianquege.top/api/v1/"
         set(value) {
             prefs.edit().putString("baseURL", value).apply()
         }

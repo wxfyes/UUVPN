@@ -110,9 +110,9 @@ class MainActivity : BaseActivity<MainDesign>() {
                     subData =  subcache.data
 
                     //存储到本地
-                    val plainid = subcache.data.plan_id ?: 0
+                    val plainid = subcache.data?.plan_id ?: 0
 //                    或者检查使用量
-                    val guoqi = (subcache.data.u ) +  (subcache.data.d) >  (subcache.data.transfer_enable ?: 0) && (subcache.data.transfer_enable ?: 0) > 0
+                    val guoqi = (subcache.data?.u ?: 0) + (subcache.data?.d ?: 0) > (subcache.data?.transfer_enable ?: 0) && (subcache.data?.transfer_enable ?: 0) > 0
                     if ( plainid == 0 || guoqi ) {
                         //提示到期
                         //删除所有节点
@@ -168,8 +168,13 @@ class MainActivity : BaseActivity<MainDesign>() {
 
 
 
-            selectnodeName.observe(this, androidx.lifecycle.Observer { newValue ->
-            })
+            // 确保 PreferenceManager 已初始化
+            try {
+                selectnodeName.observe(this, androidx.lifecycle.Observer { newValue ->
+                })
+            } catch (e: Exception) {
+                Log.e("MainActivity selectnodeName observe error: ${e.message}", e)
+            }
 
             val ticker = ticker(TimeUnit.SECONDS.toMillis(1))
 
@@ -730,7 +735,11 @@ class MainActivity : BaseActivity<MainDesign>() {
                                     patchSelector(names.first(),autoNode) // progxys.proxies.last().title
 
                                     withContext(Dispatchers.Main){
-                                        design?.setSelectNodeName(PreferenceManager.selectnodeName)
+                                        try {
+                                            design?.setSelectNodeName(PreferenceManager.selectnodeName)
+                                        } catch (e: Exception) {
+                                            Log.e("MainActivity setSelectNodeName error: ${e.message}", e)
+                                        }
                                     }
                                 }
 
@@ -763,7 +772,16 @@ class MainActivity : BaseActivity<MainDesign>() {
 
     private suspend fun activeProfile(){
         withProfile {
-            setActive(queryAll().first())
+            try {
+                val profiles = queryAll()
+                if (profiles.isNotEmpty()) {
+                    setActive(profiles.first())
+                } else {
+                    Log.w("MainActivity activeProfile: No profiles available")
+                }
+            } catch (e: Exception) {
+                Log.e("MainActivity activeProfile error: ${e.message}", e)
+            }
         }
 
     }
