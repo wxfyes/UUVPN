@@ -3,7 +3,7 @@ name: Quick Build (Skip Lint)
 on:
   workflow_dispatch:
   push:
-    branches: [ main, master ]
+    branches: [ develop, test ]
     paths:
       - 'Android-kotlin-Code/**'
 
@@ -32,15 +32,25 @@ jobs:
         cd Android-kotlin-Code
         ./gradlew assembleAlphaRelease -x lint -x test --no-daemon --stacktrace --continue || echo "Build completed"
 
-    - name: Upload APK
+    - name: Upload APK to Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: UUVPN-Quick-Build
+        name: UUVPN-Test-Build-${{ github.run_number }}
         path: Android-kotlin-Code/app/build/outputs/apk/alpha/release/*.apk
         retention-days: 30
 
     - name: Show Build Info
       run: |
-        echo "Build completed!"
+        echo "Test Build completed!"
         echo "APK files:"
         ls -la Android-kotlin-Code/app/build/outputs/apk/alpha/release/
+        echo ""
+        echo "Download APK from:"
+        echo "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        echo ""
+        echo "Build triggered by: ${{ github.event_name }}"
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "Manual trigger"
+        else
+          echo "Auto trigger from branch: ${{ github.ref_name }}"
+        fi
