@@ -39,12 +39,13 @@ subprojects {
             }
 
             multiDexEnabled = true
-            minSdk = 24
+            minSdk = 21
+            targetSdk = 34
 
             compileSdkVersion(34)
 //            targetSdkVersion(34)
-            versionName = "3.1.0"
-            versionCode = 323001
+            versionName = "3.1.1"
+            versionCode = 323002
 
             resValue("string", "release_name", "v$versionName")
             resValue("integer", "release_code", "$versionCode")
