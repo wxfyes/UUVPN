@@ -53,7 +53,11 @@ jobs:
     - name: Build Signed APK
       run: |
         cd Android-kotlin-Code
-        ./gradlew assembleAlphaRelease -x lint -x test --no-daemon --stacktrace --continue || echo "Build completed"
+        echo "Starting build process..."
+        ./gradlew assembleAlphaRelease -x lint -x test --no-daemon --stacktrace --continue
+        echo "Build process completed"
+        echo "Checking build results..."
+        ls -la app/build/outputs/apk/ || echo "APK directory not found"
 
     - name: Find APK Files
       run: |
@@ -115,7 +119,14 @@ jobs:
       run: |
         echo "Official Release Build completed!"
         echo "APK files:"
-        ls -la Android-kotlin-Code/app/build/outputs/apk/alpha/release/
+        ls -la Android-kotlin-Code/app/build/outputs/apk/alpha/release/ || echo "Release directory not found, checking other locations..."
+        ls -la Android-kotlin-Code/app/build/outputs/apk/alpha/debug/ || echo "Debug directory not found"
+        echo ""
+        echo "All APK files in project:"
+        find Android-kotlin-Code -name "*.apk" -type f || echo "No APK files found"
+        echo ""
+        echo "Build output structure:"
+        ls -la Android-kotlin-Code/app/build/outputs/ || echo "Outputs directory not found"
         echo ""
         echo "Release created at:"
         echo "https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}"
