@@ -74,9 +74,10 @@ class MainActivity : BaseActivity<MainDesign>() {
     }
 
     override suspend fun main() {
-        val design = MainDesign(this)
+        try {
+            val design = MainDesign(this)
 
-        if (PreferenceManager.isLoginin){
+            if (PreferenceManager.isLoginin){
             setContentDesign(design)
 
             design.fetch()
@@ -97,7 +98,7 @@ class MainActivity : BaseActivity<MainDesign>() {
 
 
 // 如果缓存数据存在且未超过 10 分钟，使用缓存数据；否则，重新请求数据
-            if (  PreferenceManager.cached_data != null && (currentTime - PreferenceManager.cache_timestamp) <= cacheExpiryTime)  {
+            if (  PreferenceManager.cached_data.isNotEmpty() && (currentTime - PreferenceManager.cache_timestamp) <= cacheExpiryTime)  {
                 // 使用缓存数据
                 val gson = Gson()
                 val configResponse =  gson.fromJson(PreferenceManager.cached_data, ConfigResponse::class.java)
@@ -290,7 +291,16 @@ class MainActivity : BaseActivity<MainDesign>() {
 
             }, 1000) // Simulating a network delay
         }
-
+        } catch (e: Exception) {
+            Log.e("MainActivity main() error: ${e.message}", e)
+            // 如果出现异常，跳转到登录页面
+            val binding = ActivitySplashBinding
+                .inflate(this.layoutInflater, this.root, false)
+            setContentView(binding.root)
+            Handler(Looper.getMainLooper()).postDelayed({
+                startActivity(LoginActivity::class.intent)
+            }, 1000)
+        }
     }
 
     private suspend fun configRequesting(){
