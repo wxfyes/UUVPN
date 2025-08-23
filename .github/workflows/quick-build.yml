@@ -36,14 +36,18 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: UUVPN-Test-Build-${{ github.run_number }}
-        path: Android-kotlin-Code/app/build/outputs/apk/alpha/release/*.apk
+        path: Android-kotlin-Code/app/build/outputs/apk/**/*.apk
         retention-days: 30
 
     - name: Show Build Info
       run: |
         echo "Test Build completed!"
         echo "APK files:"
-        ls -la Android-kotlin-Code/app/build/outputs/apk/alpha/release/
+        ls -la Android-kotlin-Code/app/build/outputs/apk/alpha/release/ || echo "Release directory not found, checking debug..."
+        ls -la Android-kotlin-Code/app/build/outputs/apk/alpha/debug/ || echo "Debug directory not found"
+        echo ""
+        echo "All APK files in project:"
+        find Android-kotlin-Code -name "*.apk" -type f || echo "No APK files found"
         echo ""
         echo "Download APK from:"
         echo "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"

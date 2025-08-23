@@ -55,19 +55,10 @@ jobs:
         cd Android-kotlin-Code
         ./gradlew assembleAlphaRelease -x lint -x test --no-daemon --stacktrace --continue || echo "Build completed"
 
-    - name: Find APK Files
-      run: |
-        echo "Searching for APK files..."
-        find Android-kotlin-Code -name "*.apk" -type f
-        echo ""
-        echo "APK files found:"
-        ls -la Android-kotlin-Code/app/build/outputs/apk/alpha/release/ || echo "Release directory not found"
-        ls -la Android-kotlin-Code/app/build/outputs/apk/alpha/debug/ || echo "Debug directory not found"
-
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
       with:
-        files: Android-kotlin-Code/app/build/outputs/apk/**/*.apk
+        files: Android-kotlin-Code/app/build/outputs/apk/alpha/release/*.apk
         tag_name: ${{ github.ref_name }}
         name: UUVPN ${{ github.ref_name }} (Official Release)
         body: |
