@@ -37,10 +37,9 @@ jobs:
     - name: Create signing.properties
       run: |
         cat > Android-kotlin-Code/signing.properties << EOF
-        storeFile=release.keystore
-        storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-        keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
-        keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
+        keystore.password=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        key.alias=${{ secrets.ANDROID_KEY_ALIAS }}
+        key.password=${{ secrets.ANDROID_KEY_PASSWORD }}
         EOF
 
     - name: Update Version for Android 14 Compatibility
