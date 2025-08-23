@@ -296,29 +296,6 @@ class MainActivity : BaseActivity<MainDesign>() {
     private suspend fun configRequesting(){
         val gson = Gson()
         val currentTime = System.currentTimeMillis()
-        /*apiService.getConfig().let {
-            if (it.isSuccessful) {
-                val response: ConfigResponse = it.body()  ?: throw Exception("Response body is null")
-
-                if (response.code == 1 ) {
-                    PreferenceManager.saveConfigToPreferences(response)
-                    //更新缓存数据
-                    PreferenceManager.cache_timestamp = currentTime
-                    PreferenceManager.cached_data =  gson.toJson( it.body())
-                    println("API Response:  ${gson.toJson( it.body())}")
-                    //重新初始化 ApiClint
-                    //2 : 获取订阅节点信息
-                    performSubscrite()
-                }
-
-            } else {
-                println("API Error: ${it.errorBody()}")
-                configRequesting()
-            }
-
-
-        }
-         */
 
         safeApiCall {apiService.getConfig()}.let {
             if (it !=null){
@@ -329,88 +306,109 @@ class MainActivity : BaseActivity<MainDesign>() {
                     PreferenceManager.cached_data =  gson.toJson( it)
                     println("API Response:  ${it}")
                     //重新初始化 ApiClint
-                    //2 : 获取订阅节点信息
-                    performSubscrite()
+                    //2 : 获取订阅节点信息 - 只有登录用户才获取订阅信息
+                    if (PreferenceManager.isLoginin) {
+                        performSubscrite()
+                    } else {
+                        withContext(Dispatchers.Main) {
+                            LoadingDialog.hide()
+                        }
+                    }
                 }
             }else{
-                configRequesting()
+                // 如果API调用失败，不要无限重试，避免闪退
+                println("API call failed, not retrying to avoid crash")
+                withContext(Dispatchers.Main) {
+                    LoadingDialog.hide()
+                }
             }
-
         }
     }
 
     private fun performSubscrite(){
-
+        // 检查登录状态和认证数据
+        if (!PreferenceManager.isLoginin || PreferenceManager.loginauthData.isEmpty()) {
+            println("User not logged in or no auth data, skipping subscription")
+            withContext(Dispatchers.Main) {
+                LoadingDialog.hide()
+            }
+            return
+        }
 
         val apiServiceApp = ApiClient.retrofit.create(ApiService::class.java)
 
         //获取 Config 数据
         CoroutineScope(Dispatchers.IO).launch {
-            safeApiRequestCall {
-                apiServiceApp.getSubscribe(PreferenceManager.loginauthData)}.let {
+            try {
+                safeApiRequestCall {
+                    apiServiceApp.getSubscribe(PreferenceManager.loginauthData)
+                }.let { response ->
+                    withContext(Dispatchers.Main) {
+                        LoadingDialog.hide()
+                    }
+                    
+                    if (response != null && response.isSuccessful) {
+                        println(" performSubscrite : ${response.body()?.data}")
+                        subData = response.body()?.data
+
+                        val gson = Gson()
+                        PreferenceManager.cached_userSubscritedata = gson.toJson(response.body())
+                        APIGlobalObject.subData = response.body()?.data
+                        
+                        //存储到本地
+                        val plainid = response.body()?.data?.plan_id ?: 0
+                        //或者检查使用量
+                        val guoqi = (response.body()?.data?.u ?: 0) + (response.body()?.data?.d ?: 0) > (response.body()?.data?.transfer_enable ?: 0) && (response.body()?.data?.transfer_enable ?: 0) > 0
+                        
+                        if (plainid == 0 || guoqi) {
+                            //提示到期
+                            //删除所有节点
+                            withProfile {
+                                var allProfiles = queryAll()
+                                println(allProfiles)
+                                if (allProfiles.isNotEmpty() && allProfiles.count() > 1){
+                                    allProfiles.forEach { delete(it.uuid) }
+                                }
+                            }
+
+                            withContext(Dispatchers.Main) {
+                                showCustomDialog(
+                                    title = "提示",
+                                    message = "您的订阅已到期，请续费订阅开启服务",
+                                    positiveButtonText = "确定",
+                                    negativeButtonText = "取消",
+                                    onPositiveClick = {
+                                        startActivity(PlansActivity::class.intent)
+                                    },
+                                    onNegativeClick = {
+                                        // 执行取消操作
+                                    }
+                                )
+                            }
+                        } else {
+                            //更新本地节点
+                            withProfile {
+                                var profileActive = queryActive()
+                                if (profileActive != null){
+                                    try {
+                                        println(">>>>>>>>> 更新节点订阅地址：${profileActive.uuid}  ${profileActive.source}")
+                                        update(profileActive.uuid)
+                                    } catch (e: Exception){
+                                        println(">>>>>>>>> 更新节点订阅地址 catch：${e.message}")
+                                    } finally {
+                                        println(">>>>>>>>> 更新节点订阅地址 完成 finally")
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        println("Subscription API call failed: ${response?.code()}")
+                    }
+                }
+            } catch (e: Exception) {
+                println("Exception in performSubscrite: ${e.message}")
                 withContext(Dispatchers.Main) {
                     LoadingDialog.hide()
-                }
-                if (it != null &&
-                    it.isSuccessful) {
-                    println(" performSubscrite : ${it.body()?.data}")
-                    subData = it.body()?.data
-
-                    val gson = Gson()
-                    PreferenceManager.cached_userSubscritedata =  gson.toJson( it.body())
-                    APIGlobalObject.subData =  it.body()?.data
-                    //存储到本地
-                    val plainid = it.body()?.data?.plan_id ?: 0
-//                    或者检查使用量
-                    val guoqi = (it.body()?.data?.u ?: 0) +  (it.body()?.data?.d ?: 0) >  (it.body()?.data?.transfer_enable ?: 0) && (it.body()?.data?.transfer_enable ?: 0) > 0
-                    if ( plainid == 0 || guoqi ) {
-                        //提示到期
-                        //删除所有节点
-                        withProfile {
-                            var allProfiles = queryAll()
-                            println(allProfiles)
-                            if (allProfiles.isNotEmpty() && allProfiles.count() > 1){
-                                allProfiles.forEach { delete(it.uuid) }
-                               //删除所有节点
-                            }
-                        }
-
-                        //删除所有节点文件
-
-                        withContext(Dispatchers.Main) {
-                            showCustomDialog(
-                                title = "提示",
-                                message = "您的订阅已到期，请续费订阅开启服务",
-                                positiveButtonText = "确定",
-                                negativeButtonText = "取消",
-                                onPositiveClick = {
-                                    // 执行确认操作
-                                    startActivity(PlansActivity::class.intent)
-                                },
-                                onNegativeClick = {
-                                    // 执行取消操作
-                                }
-                            )
-                        }
-
-                    }else{
-                        //更新本地节点
-                        withProfile {
-                            var profileActive = queryActive()
-                            if (profileActive != null){
-                                try {
-                                    println(">>>>>>>>> 更新节点订阅地址：${profileActive.uuid}  ${profileActive.source}")
-                                    update(profileActive.uuid)
-                                }catch (e: Exception){
-                                    println(">>>>>>>>> 更新节点订阅地址 catch：${e.message}")
-                                }
-                                finally {
-                                    println(">>>>>>>>> 更新节点订阅地址 完成 finally")
-                                }
-                            }
-
-                        }
-                    }
                 }
             }
         }
