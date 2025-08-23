@@ -23,7 +23,7 @@ object ApiClient {
         if (url.isNotEmpty()) {
             url
         } else {
-            "https://tianque.126581.xyz/" // 默认API地址
+            "https://go.tianquege.top/api/v1/" // 默认API地址
         }
     }
 
