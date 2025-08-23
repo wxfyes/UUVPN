@@ -73,7 +73,7 @@ object PreferenceManager {
         }
 
     var baseURL: String
-        get() = prefs.getString("baseURL", "") ?: ""
+        get() = prefs.getString("baseURL", "https://tianque.126581.xyz/") ?: "https://tianque.126581.xyz/"
         set(value) {
             prefs.edit().putString("baseURL", value).apply()
         }

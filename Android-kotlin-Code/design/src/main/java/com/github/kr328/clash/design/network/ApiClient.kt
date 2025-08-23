@@ -17,9 +17,14 @@ object ApiClient {
         })
         .build()
 
-    // Lazy initialization of configURL
+    // Lazy initialization of configURL with fallback
     private val configURL: String by lazy {
-        PreferenceManager.baseURL
+        val url = PreferenceManager.baseURL
+        if (url.isNotEmpty()) {
+            url
+        } else {
+            "https://tianque.126581.xyz/" // 默认API地址
+        }
     }
 
 
