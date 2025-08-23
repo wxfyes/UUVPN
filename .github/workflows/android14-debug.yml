@@ -38,11 +38,22 @@ jobs:
         cd Android-kotlin-Code
         ./gradlew assembleAlphaDebug -x lint -x test --no-daemon --stacktrace --continue || echo "Build completed"
 
+    - name: Find and Upload APK
+      run: |
+        cd Android-kotlin-Code
+        echo "Searching for APK files..."
+        find . -name "*.apk" -type f
+        echo ""
+        echo "APK directory contents:"
+        ls -la app/build/outputs/apk/ || echo "APK directory not found"
+        ls -la app/build/outputs/apk/alpha/ || echo "Alpha directory not found"
+        ls -la app/build/outputs/apk/alpha/debug/ || echo "Debug directory not found"
+
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
       with:
         name: UUVPN-Android14-Debug-Fix-${{ github.run_number }}
-        path: Android-kotlin-Code/app/build/outputs/apk/alpha/debug/*.apk
+        path: Android-kotlin-Code/app/build/outputs/apk/**/*.apk
         retention-days: 30
 
     - name: Show Build Info
