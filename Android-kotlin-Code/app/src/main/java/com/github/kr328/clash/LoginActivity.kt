@@ -108,7 +108,9 @@ class LoginActivity : AppCompatActivity() {
                 if (currentFocusView != null) {
                     inputMethodManager.hideSoftInputFromWindow(currentFocusView.windowToken, 0)
                 }
-                performLogin(email, password)
+                CoroutineScope(Dispatchers.Main).launch {
+                    performLogin(email, password)
+                }
             }
         }
 
@@ -192,7 +194,7 @@ class LoginActivity : AppCompatActivity() {
         this.dayNight =  DayNight.Night //dayNight
     }
 
-    private fun performLogin(email: String, password: String) {
+    private suspend fun performLogin(email: String, password: String) {
         // 显示开始登录的调试信息
         withContext(Dispatchers.Main) {
             Toast.makeText(this@LoginActivity, "开始登录...", Toast.LENGTH_SHORT).show()
@@ -204,7 +206,7 @@ class LoginActivity : AppCompatActivity() {
         val apiServiceApp = ApiClient.retrofit.create(ApiService::class.java)
 
         //获取 Config 数据
-        CoroutineScope(Dispatchers.IO).launch {
+        withContext(Dispatchers.IO) {
 
             safeApiRequestCall {
                 apiServiceApp.loginUser(LoginRequest(email,password))}.let {

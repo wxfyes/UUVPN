@@ -75,7 +75,9 @@ class RegisterActivity : AppCompatActivity() {
                     inputMethodManager.hideSoftInputFromWindow(currentFocusView.windowToken, 0)
                 }
 
-                performLogin(email, password)
+                CoroutineScope(Dispatchers.Main).launch {
+                    performLogin(email, password)
+                }
             }
         }
 
@@ -149,7 +151,7 @@ class RegisterActivity : AppCompatActivity() {
         this.dayNight =  DayNight.Night //dayNight
     }
 
-    private fun performLogin(email: String, password: String) {
+    private suspend fun performLogin(email: String, password: String) {
         // Perform login logic here, possibly calling an API
 
         // Show the loading indicator with a custom message
@@ -158,7 +160,7 @@ class RegisterActivity : AppCompatActivity() {
         val apiServiceApp = ApiClient.retrofit.create(ApiService::class.java)
 
         //获取 Config 数据
-        CoroutineScope(Dispatchers.IO).launch {
+        withContext(Dispatchers.IO) {
             safeApiRequestCall {
                 apiServiceApp.registerUser(LoginRequest(email,password))}.let {
                 withContext(Dispatchers.Main) {

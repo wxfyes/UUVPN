@@ -166,7 +166,9 @@ class HelpDesign(
                 if (currentFocusView != null) {
                     inputMethodManager.hideSoftInputFromWindow(currentFocusView.windowToken, 0)
                 }
-                performLogin(gondanSubText, gondanSubContent)
+                CoroutineScope(Dispatchers.Main).launch {
+                    performLogin(gondanSubText, gondanSubContent)
+                }
             }
         }
 
@@ -197,7 +199,7 @@ class HelpDesign(
         return encoded.toString()
     }
 
-    private fun performLogin(email: String, password: String) {
+    private suspend fun performLogin(email: String, password: String) {
         // Perform login logic here, possibly calling an API
 
         // Show the loading indicator with a custom message
@@ -206,7 +208,7 @@ class HelpDesign(
         val apiServiceApp = ApiClient.retrofit.create(ApiService::class.java)
 
         //获取 Config 数据
-        CoroutineScope(Dispatchers.IO).launch {
+        withContext(Dispatchers.IO) {
             val fieldMap = mutableMapOf<String, String>()
             val email1 = encodeString(email)
             val password1 =encodeString(password)
