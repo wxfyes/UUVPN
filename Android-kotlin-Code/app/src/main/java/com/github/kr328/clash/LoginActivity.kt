@@ -219,29 +219,26 @@ class LoginActivity : AppCompatActivity() {
                 if (it != null && it.isSuccessful) {
                     val response: LoginResponse? = it.body()
                     
-                    // 添加详细调试信息 - 使用Toast显示
-                    val rawResponse = it.body()
-                    val debugInfo = """
-                        HTTP状态码: ${it.code()}
-                        原始响应: $rawResponse
-                        解析后: $response
-                        data字段: ${response?.data}
-                        完整JSON: ${it.raw().body?.string()}
-                    """.trimIndent()
-                    
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(this@LoginActivity, "调试信息: $debugInfo", Toast.LENGTH_LONG).show()
-                    }
+                    // 移除调试信息，直接处理登录逻辑
                     
                     // 检查响应数据
                     if (response?.data != null) {
                         
+                        // 保存登录信息
                         PreferenceManager.loginemail = email
                         PreferenceManager.loginToken = response.data?.token ?: ""
                         PreferenceManager.loginauthData = response.data?.auth_data ?: ""
                         PreferenceManager.isLoginin = true
+                        
+                        // 添加调试信息
+                        println("登录成功，保存的数据:")
+                        println("email: ${PreferenceManager.loginemail}")
+                        println("token: ${PreferenceManager.loginToken}")
+                        println("auth_data: ${PreferenceManager.loginauthData}")
+                        println("isLoginin: ${PreferenceManager.isLoginin}")
 
                         withContext(Dispatchers.Main) {
+                            Toast.makeText(this@LoginActivity, "登录成功，正在跳转...", Toast.LENGTH_SHORT).show()
                             val intent = Intent(this@LoginActivity, MainActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
