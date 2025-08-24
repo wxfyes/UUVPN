@@ -219,9 +219,20 @@ class LoginActivity : AppCompatActivity() {
                 if (it != null && it.isSuccessful) {
                     val response: LoginResponse? = it.body()
                     
-                    // 添加调试信息
-                    println("登录响应: $response")
-                    println("响应数据: ${response?.data}")
+                    // 添加详细调试信息 - 使用Toast显示
+                    val debugInfo = """
+                        HTTP状态码: ${it.code()}
+                        响应体: ${it.body()}
+                        解析后: $response
+                        data: ${response?.data}
+                        token: ${response?.data?.token}
+                        auth_data: ${response?.data?.auth_data}
+                        isAdmin: ${response?.data?.isAdmin}
+                    """.trimIndent()
+                    
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@LoginActivity, "调试信息: $debugInfo", Toast.LENGTH_LONG).show()
+                    }
                     
                     // 检查响应数据
                     if (response?.data != null) {
