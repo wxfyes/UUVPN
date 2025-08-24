@@ -252,11 +252,14 @@ class LoginActivity : AppCompatActivity() {
                         println("isLoginin: ${PreferenceManager.isLoginin}")
 
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(this@LoginActivity, "登录成功，正在跳转...", Toast.LENGTH_SHORT).show()
-                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            startActivity(intent)
-                            finish()
+                            Toast.makeText(this@LoginActivity, "登录成功！数据已保存，3秒后跳转...", Toast.LENGTH_LONG).show()
+                            // 延迟3秒再跳转，让用户看到调试信息
+                            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                startActivity(intent)
+                                finish()
+                            }, 3000)
                         }
                     } else {
                         // 显示数据为空的情况
