@@ -219,18 +219,21 @@ class LoginActivity : AppCompatActivity() {
                 if (it != null && it.isSuccessful) {
                     val response: LoginResponse? = it.body()
                     
-                    // 添加详细调试信息 - 使用Toast显示
-                    val debugInfo = """
-                        HTTP状态码: ${it.code()}
-                        解析后LoginResponse: $response
-                        response?.data: ${response?.data}
-                        data?.token: ${response?.data?.token}
-                        data?.auth_data: ${response?.data?.auth_data}
-                        data?.isAdmin: ${response?.data?.isAdmin}
-                    """.trimIndent()
-                    
+                    // 添加详细调试信息 - 分成多个Toast显示
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@LoginActivity, "调试信息: $debugInfo", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@LoginActivity, "HTTP状态码: ${it.code()}", Toast.LENGTH_LONG).show()
+                        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                            Toast.makeText(this@LoginActivity, "response?.data: ${response?.data}", Toast.LENGTH_LONG).show()
+                        }, 2000)
+                        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                            Toast.makeText(this@LoginActivity, "data?.token: ${response?.data?.token}", Toast.LENGTH_LONG).show()
+                        }, 4000)
+                        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                            Toast.makeText(this@LoginActivity, "data?.auth_data: ${response?.data?.auth_data}", Toast.LENGTH_LONG).show()
+                        }, 6000)
+                        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                            Toast.makeText(this@LoginActivity, "data?.isAdmin: ${response?.data?.isAdmin}", Toast.LENGTH_LONG).show()
+                        }, 8000)
                     }
                     
                     // 检查响应数据
