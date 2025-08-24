@@ -193,7 +193,10 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun performLogin(email: String, password: String) {
-        // Perform login logic here, possibly calling an API
+        // 显示开始登录的调试信息
+        withContext(Dispatchers.Main) {
+            Toast.makeText(this@LoginActivity, "开始登录...", Toast.LENGTH_SHORT).show()
+        }
 
         // Show the loading indicator with a custom message
         LoadingDialog.show(this, "正在登录...")
@@ -208,16 +211,42 @@ class LoginActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     LoadingDialog.hide()
                 }
-                if (it != null &&
-                    it.isSuccessful) {
+                
+                // 显示网络请求结果
+                withContext(Dispatchers.Main) {
+                    val statusText = if (it?.isSuccessful == true) "网络请求成功" else "网络请求失败: ${it?.code()}"
+                    Toast.makeText(this@LoginActivity, statusText, Toast.LENGTH_SHORT).show()
+                }
+                
+                if (it != null && it.isSuccessful) {
                     val response: LoginResponse? = it.body()
-                    println(response )
-                    println(it.errorBody()?.string()  ?: "")
-                    if (response?.data != null){
+                    
+                    // 显示服务器返回的数据
+                    withContext(Dispatchers.Main) {
+                        val responseText = "服务器响应: ${response?.data?.token?.take(10) ?: "null"}..."
+                        Toast.makeText(this@LoginActivity, responseText, Toast.LENGTH_LONG).show()
+                    }
+                    
+                    println("完整响应: $response")
+                    println("错误体: ${it.errorBody()?.string() ?: ""}")
+                    
+                    // 检查响应数据
+                    if (response?.data != null) {
+                        // 显示数据解析结果
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@LoginActivity, "数据解析成功，准备保存登录状态", Toast.LENGTH_SHORT).show()
+                        }
+                        
                         PreferenceManager.loginemail = email
-                        PreferenceManager.loginToken =  response.data?.token ?: ""
-                        PreferenceManager.loginauthData =  response.data?.auth_data ?: ""
+                        PreferenceManager.loginToken = response.data?.token ?: ""
+                        PreferenceManager.loginauthData = response.data?.auth_data ?: ""
                         PreferenceManager.isLoginin = true
+                        
+                        // 显示保存的登录状态
+                        withContext(Dispatchers.Main) {
+                            val saveText = "登录状态已保存:\nToken: ${PreferenceManager.loginToken.take(10)}...\nAuth: ${PreferenceManager.loginauthData.take(10)}..."
+                            Toast.makeText(this@LoginActivity, saveText, Toast.LENGTH_LONG).show()
+                        }
                         
                         // 添加调试日志
                         println("登录成功 - 保存登录状态:")
@@ -226,24 +255,33 @@ class LoginActivity : AppCompatActivity() {
                         println("auth_data: ${PreferenceManager.loginauthData}")
                         println("isLoginin: ${PreferenceManager.isLoginin}")
                         
-//                        saveLoginMailToken(this@LoginActivity,email)
-//                        saveLoginToken(this@LoginActivity, response.data.token ?: "")
-//                        saveLoginAuthData(this@LoginActivity, response.data.auth_data ?: "")
-//                        saveLoginStatus(this@LoginActivity,true)
-                        //获取用户信息
+                        // 显示准备跳转
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@LoginActivity, "准备跳转到主界面...", Toast.LENGTH_SHORT).show()
+                        }
 
                         withContext(Dispatchers.Main) {
                             val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                            intent.flags =
-                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
-                            finish()  // It
+                            finish()
                         }
+                    } else {
+                        // 显示数据为空的情况
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@LoginActivity, "服务器返回数据为空，登录失败", Toast.LENGTH_LONG).show()
+                        }
+                        println("响应数据为空: response?.data = ${response?.data}")
                     }
-                }else{
+                } else {
+                    // 显示网络错误
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@LoginActivity, "网络请求失败: ${it?.code()}", Toast.LENGTH_LONG).show()
+                    }
+                    
                     // Handle error response, even if it's 422
                     try {
-                        val errorResponse = it?.errorBody()?.string()  ?: ""
+                        val errorResponse = it?.errorBody()?.string() ?: ""
                         val errorJson = JSONObject(errorResponse)
                         val message = errorJson.optString("message")
                         // Process the error message or show it to the user
@@ -252,18 +290,15 @@ class LoginActivity : AppCompatActivity() {
                                 Toast.makeText(this@LoginActivity, "登录失败：${message}", Toast.LENGTH_LONG).show()
                             }
                         }
-                        println( "Message: $message,  ")
+                        println("错误信息: $message")
                     } catch (e: JSONException) {
                         // Handle JSON parsing error
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(this@LoginActivity, "登录失败：${e.message}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@LoginActivity, "登录失败：响应格式错误", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
             }
-
         }
-
-
     }
 }
