@@ -77,6 +77,12 @@ class MainActivity : BaseActivity<MainDesign>() {
         try {
             val design = MainDesign(this)
 
+            // 添加调试日志
+            println("MainActivity启动 - 检查登录状态:")
+            println("isLoginin: ${PreferenceManager.isLoginin}")
+            println("loginemail: ${PreferenceManager.loginemail}")
+            println("loginauthData: ${PreferenceManager.loginauthData}")
+
             if (PreferenceManager.isLoginin){
             setContentDesign(design)
 

@@ -66,6 +66,12 @@ class LoginActivity : AppCompatActivity() {
         applyDayNight()
 
         PreferenceManager.init(this)
+        
+        // 添加调试日志
+        println("LoginActivity onCreate - 检查登录状态:")
+        println("isLoginin: ${PreferenceManager.isLoginin}")
+        println("loginemail: ${PreferenceManager.loginemail}")
+        println("loginauthData: ${PreferenceManager.loginauthData}")
 
         binding.togglePasswordVisibility.setOnClickListener {
 
@@ -212,6 +218,14 @@ class LoginActivity : AppCompatActivity() {
                         PreferenceManager.loginToken =  response.data?.token ?: ""
                         PreferenceManager.loginauthData =  response.data?.auth_data ?: ""
                         PreferenceManager.isLoginin = true
+                        
+                        // 添加调试日志
+                        println("登录成功 - 保存登录状态:")
+                        println("email: ${PreferenceManager.loginemail}")
+                        println("token: ${PreferenceManager.loginToken}")
+                        println("auth_data: ${PreferenceManager.loginauthData}")
+                        println("isLoginin: ${PreferenceManager.isLoginin}")
+                        
 //                        saveLoginMailToken(this@LoginActivity,email)
 //                        saveLoginToken(this@LoginActivity, response.data.token ?: "")
 //                        saveLoginAuthData(this@LoginActivity, response.data.auth_data ?: "")

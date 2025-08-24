@@ -11,7 +11,7 @@ object PreferenceManager {
     private lateinit var prefs: SharedPreferences
 
     fun init(context: Context) {
-        prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE or Context.MODE_MULTI_PROCESS)
+        prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     }
 
     fun clearData(){
