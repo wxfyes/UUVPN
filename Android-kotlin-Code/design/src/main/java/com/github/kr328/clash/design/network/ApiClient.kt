@@ -39,7 +39,7 @@ object ApiClient {
 }
 
 object ApiClientConfig {
-    private const val ConfigURL = "https://tianque.126581.xyz/config" // BASE 请求配置文件地址 见说明文档
+    private const val ConfigURL = "https://tianque.126581.xyz/" // BASE 请求配置文件地址 见说明文档
     //const val ConfigNodeURL = "https://api.xxxx.com/api/parseyamlclash.php?target=clashmeta&url=" //通过香港服务器转接一次Clash转化的订阅地址
     const val ConfigNodeURL = ""
 
