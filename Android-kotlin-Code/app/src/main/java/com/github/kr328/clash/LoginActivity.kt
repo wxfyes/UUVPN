@@ -102,6 +102,13 @@ class LoginActivity : AppCompatActivity() {
                 if (currentFocusView != null) {
                     inputMethodManager.hideSoftInputFromWindow(currentFocusView.windowToken, 0)
                 }
+                
+                // 检查配置是否已获取
+                if (PreferenceManager.baseURL == "https://123.108.70.221:8443/api/v1/") {
+                    Toast.makeText(this, "正在获取配置信息，请稍后再试", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                
                 CoroutineScope(Dispatchers.Main).launch {
                     performLogin(email, password)
                 }
@@ -130,21 +137,28 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun getconfig(){
-
         LoadingDialog.show(this, "正在初始化...")
         CoroutineScope(Dispatchers.IO).launch {
-
-            safeApiCall {apiService.getConfig()}.let {
-                if (it != null) {
-                    if (it.code == 1 ) {
+            try {
+                safeApiCall {apiService.getConfig()}.let {
+                    if (it != null && it.code == 1) {
                         withContext(Dispatchers.Main) {
                             LoadingDialog.hide()
                         }
-                        PreferenceManager.saveConfigToPreferences( it)
-                        //重新初始化 ApiClint
+                        PreferenceManager.saveConfigToPreferences(it)
+                        // 配置获取成功
+                    } else {
+                        // 配置获取失败，但不重试
+                        withContext(Dispatchers.Main) {
+                            LoadingDialog.hide()
+                            Toast.makeText(this@LoginActivity, "配置获取失败，请检查网络连接", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                }else{
-                    getconfig()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    LoadingDialog.hide()
+                    Toast.makeText(this@LoginActivity, "初始化失败：${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -255,3 +269,4 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 }
+

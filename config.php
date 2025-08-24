@@ -12,8 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 // 配置数据
     $config = [
-        "baseURL" => "https://tianque.126581.xyz/api/v1/",
-        "baseDYURL" => "https://tianque.126581.xyz/api/vpnnodes.php",
+        "baseURL" => "https://123.108.70.221:8443/api/v1/",
+        "baseDYURL" => "https://123.108.70.221:8443/api/vpnnodes.php",
         "mainregisterURL" => "https://tianque.126581.xyz/#/register?code=",
         "paymentURL" => "https://tianque.126581.xyz/payment",
         "telegramurl" => "https://t.me/fastlink",

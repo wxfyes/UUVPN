@@ -111,7 +111,7 @@ function handleLogin() {
             "message" => "登录成功",
             "data" => [
                 "token" => "sample_token_" . time(),
-                "isAdmin" => 0,
+                "is_admin" => 0,
                 "auth_data" => "Bearer sample_auth_" . time()
             ]
         ];
@@ -135,7 +135,7 @@ function handleRegister() {
             "message" => "注册成功",
             "data" => [
                 "token" => "sample_token_" . time(),
-                "isAdmin" => 0,
+                "is_admin" => 0,
                 "auth_data" => "Bearer sample_auth_" . time()
             ]
         ];
