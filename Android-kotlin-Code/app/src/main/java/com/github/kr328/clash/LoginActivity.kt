@@ -220,14 +220,13 @@ class LoginActivity : AppCompatActivity() {
                     val response: LoginResponse? = it.body()
                     
                     // 添加详细调试信息 - 使用Toast显示
+                    val rawResponse = it.body()
                     val debugInfo = """
                         HTTP状态码: ${it.code()}
-                        响应体: ${it.body()}
+                        原始响应: $rawResponse
                         解析后: $response
-                        data: ${response?.data}
-                        token: ${response?.data?.token}
-                        auth_data: ${response?.data?.auth_data}
-                        isAdmin: ${response?.data?.isAdmin}
+                        data字段: ${response?.data}
+                        完整JSON: ${it.raw().body?.string()}
                     """.trimIndent()
                     
                     withContext(Dispatchers.Main) {
