@@ -108,7 +108,6 @@ function handleLogin() {
     // 简单的登录验证（实际应用中需要数据库验证）
     if ($email && $password) {
         $response = [
-            "message" => "登录成功",
             "data" => [
                 "token" => "sample_token_" . time(),
                 "is_admin" => 0,
@@ -117,7 +116,6 @@ function handleLogin() {
         ];
     } else {
         $response = [
-            "message" => "邮箱或密码错误",
             "data" => null
         ];
     }

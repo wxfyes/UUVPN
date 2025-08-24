@@ -1,0 +1,3 @@
+[33me869fee[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m 修复LoginData中is_admin字段类型，从Int?改为Int
+[33m1275961[m 暂时禁用登录跳转，只显示调试信息
+[33m013b825[m 修改登录跳转逻辑，延迟3秒跳转让用户看到调试信息
