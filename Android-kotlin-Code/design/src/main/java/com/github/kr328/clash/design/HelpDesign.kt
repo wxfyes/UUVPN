@@ -237,6 +237,10 @@ class HelpDesign(
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(context, "提交失败: ${submitResponse.message}",  Toast.LENGTH_SHORT).show()
                             }
+                        } else {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, "提交失败: 未知错误",  Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }else{
                         withContext(Dispatchers.Main) {
