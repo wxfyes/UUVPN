@@ -336,7 +336,7 @@ data class LoginResponse(val data: LoginData?)
 
 data class LoginData (
     val token: String?,
-    @SerializedName("is_admin") val isAdmin: Int?,
+    @SerializedName("is_admin") val isAdmin: Int,
     val auth_data: String?
 )
 
