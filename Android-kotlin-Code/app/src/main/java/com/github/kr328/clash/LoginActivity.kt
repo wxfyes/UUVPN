@@ -219,6 +219,11 @@ class LoginActivity : AppCompatActivity() {
                 if (it != null && it.isSuccessful) {
                     val response: LoginResponse? = it.body()
                     
+                    // 添加调试信息
+                    println("登录响应: $response")
+                    println("响应数据: ${response?.data}")
+                    println("响应消息: ${response?.message}")
+                    
                     // 检查响应数据
                     if (response?.data != null) {
                         

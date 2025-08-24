@@ -331,7 +331,7 @@ data class RegisterResponse(val success: Boolean, val message: String)
 
 data class LoginRequest(val email: String, val password: String ,val captchaData: String = "")
 
-data class LoginResponse(val message: String?, val data: LoginData?)
+data class LoginResponse(val data: LoginData?)
 
 
 data class LoginData (
