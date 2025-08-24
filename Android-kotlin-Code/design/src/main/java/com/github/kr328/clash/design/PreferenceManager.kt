@@ -73,7 +73,7 @@ object PreferenceManager {
         }
 
     var baseURL: String
-        get() = prefs.getString("baseURL", "https://go.tianquege.top/api/v1/") ?: "https://go.tianquege.top/api/v1/"
+        get() = prefs.getString("baseURL", "https://123.108.70.221:8443/api/v1/") ?: "https://123.108.70.221:8443/api/v1/"
         set(value) {
             prefs.edit().putString("baseURL", value).apply()
         }
