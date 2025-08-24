@@ -103,11 +103,8 @@ class LoginActivity : AppCompatActivity() {
                     inputMethodManager.hideSoftInputFromWindow(currentFocusView.windowToken, 0)
                 }
                 
-                // 检查配置是否已获取
-                if (PreferenceManager.baseURL == "https://123.108.70.221:8443/api/v1/") {
-                    Toast.makeText(this, "正在获取配置信息，请稍后再试", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
+                // 检查配置是否已获取（移除这个检查，因为配置获取成功后的baseURL与默认值相同）
+                // 直接允许登录，让网络请求自己处理错误
                 
                 CoroutineScope(Dispatchers.Main).launch {
                     performLogin(email, password)
