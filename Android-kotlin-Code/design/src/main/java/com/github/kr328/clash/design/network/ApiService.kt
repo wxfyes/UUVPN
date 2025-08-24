@@ -336,7 +336,7 @@ data class LoginResponse(val message: String?, val data: LoginData?)
 
 data class LoginData (
     val token: String?,
-    val isAdmin: Int?,
+    @SerializedName("is_admin") val isAdmin: Int?,
     val auth_data: String?
 )
 
@@ -355,11 +355,14 @@ data class SubscribeData  (
     @SerializedName("u") val u : Long,
     @SerializedName("d") val d : Long,
     @SerializedName("transfer_enable") val transfer_enable : Long?,
+    @SerializedName("device_limit") val device_limit : Long?,
     @SerializedName("email") val email : String,
     @SerializedName("uuid") val uuid : String,
     @SerializedName("plan") val plan : PlanData?,
+    @SerializedName("alive_ip") val alive_ip : Long?,
     @SerializedName("subscribe_url") val subscribe_url : String,
-    @SerializedName("reset_day") val reset_day : String?
+    @SerializedName("reset_day") val reset_day : Int?,
+    @SerializedName("allow_new_period") val allow_new_period : Int?
 
 )
 
@@ -395,17 +398,23 @@ data class UserInfoResponse (
 
 data class UserInfoData (
     val email: String,
-    val transferEnable: Long?,
-    val lastLoginAt: Long,
-    val createdAt: Long?,
+    @SerializedName("transfer_enable") val transferEnable: Long?,
+    @SerializedName("device_limit") val deviceLimit: Long?,
+    @SerializedName("last_login_at") val lastLoginAt: Long,
+    @SerializedName("created_at") val createdAt: Long?,
     val banned: Long?,
-    val remindExpire: Long?,
-    val remindTraffic: Long?,
-    val expiredAt: Long?,
+    @SerializedName("auto_renewal") val autoRenewal: Long?,
+    @SerializedName("remind_expire") val remindExpire: Long?,
+    @SerializedName("remind_traffic") val remindTraffic: Long?,
+    @SerializedName("expired_at") val expiredAt: Long?,
     val balance: Long?,
-    val commissionBalance: Long?,
+    @SerializedName("commission_balance") val commissionBalance: Long?,
+    @SerializedName("plan_id") val planId: Long?,
+    val discount: Long?,
+    @SerializedName("commission_rate") val commissionRate: Long?,
+    @SerializedName("telegram_id") val telegramId: String?,
     val uuid: String,
-    val avatarURL: String?
+    @SerializedName("avatar_url") val avatarURL: String?
 )
 
  data class PlansResponse(
