@@ -222,13 +222,11 @@ class LoginActivity : AppCompatActivity() {
                     // 添加详细调试信息 - 使用Toast显示
                     val debugInfo = """
                         HTTP状态码: ${it.code()}
-                        原始响应体: ${it.body()}
                         解析后LoginResponse: $response
                         response?.data: ${response?.data}
                         data?.token: ${response?.data?.token}
                         data?.auth_data: ${response?.data?.auth_data}
                         data?.isAdmin: ${response?.data?.isAdmin}
-                        完整JSON: ${it.raw().body?.string()}
                     """.trimIndent()
                     
                     withContext(Dispatchers.Main) {
